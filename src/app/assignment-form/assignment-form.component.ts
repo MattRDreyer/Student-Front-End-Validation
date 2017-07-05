@@ -1,7 +1,8 @@
 import 'rxjs/add/operator/switchMap';
-import { Component, OnInit }      from '@angular/core';
+import { Component, OnInit, ViewChild }      from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location }               from '@angular/common';
+import { NgForm } from '@angular/forms';
 
 import { DataService } from '../data.service'
 
@@ -79,6 +80,7 @@ export class AssignmentFormComponent implements OnInit {
     }
 
     this.assignment = {};
+    this.assignmentForm.reset();
     
   }
 
@@ -99,6 +101,56 @@ export class AssignmentFormComponent implements OnInit {
       return item1.student_id === item2.student_id;
     }
   }
+
+  ngAfterViewChecked() {
+    this.formChanged();
+  }
+
+  assignmentForm: NgForm;
+  @ViewChild('assignmentForm') currentForm: NgForm;
+
+  formChanged() {
+    this.assignmentForm = this.currentForm;
+    this.assignmentForm.valueChanges
+      .subscribe(
+        data => this.onValueChanged(data)
+      );
+  }
+
+  onValueChanged(data?: any) {
+    let form = this.assignmentForm.form;
+
+    for (let field in this.formErrors) {
+      // clear previous error message (if any)
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  formErrors = {
+    'student_id': '',
+    'assignment_nbr': ''
+  };
+
+
+  validationMessages = {
+    'student_id': {
+      'required': 'A student is required.',
+    },
+    'assignment_nbr': {
+      'required': 'An assignment number is required.',
+      'minlength': 'The assignment number must be at least 2 characters long.',
+    }
+
+  };
+
   
 
 }
