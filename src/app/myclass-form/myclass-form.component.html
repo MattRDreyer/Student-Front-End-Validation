@@ -1,3 +1,4 @@
+<section @fadeInAnimation>
 <ol class="breadcrumb">
     <li><a routerLink="/home">Home</a></li>
     <li><a routerLink="/myclass">Myclasses</a></li>
@@ -46,8 +47,9 @@
   </div>
    <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button [disabled]="!gradeForm.form.valid" type="submit" class="btn btn-primary">Submit</button>
+      <button [disabled]="!myclassForm.form.valid" type="submit" class="btn btn-primary">Submit</button>
     </div>
   </div>
 </form>
+</section>
 

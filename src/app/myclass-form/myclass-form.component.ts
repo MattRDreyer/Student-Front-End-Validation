@@ -5,12 +5,15 @@ import { Location }               from '@angular/common';
 import { NgForm } from '@angular/forms';
 
 import { DataService } from '../data.service'
+import { fadeInAnimation } from '../animations/fade-in.animation';
 
 @Component({
   selector: 'app-myclass-form',
   templateUrl: './myclass-form.component.html',
-  styleUrls: ['./myclass-form.component.css']
+  styleUrls: ['./myclass-form.component.css'],
+  animations: [fadeInAnimation]
 })
+
 export class MyclassFormComponent implements OnInit {
 
   myclassForm: NgForm;
@@ -106,7 +109,7 @@ export class MyclassFormComponent implements OnInit {
   formErrors = {
     'instructor': '',
     'subject': '',
-    'course': '',
+    'course': ''
   };
 
   validationMessages = {
