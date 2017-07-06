@@ -1,7 +1,8 @@
 import 'rxjs/add/operator/switchMap';
-import { Component, OnInit }      from '@angular/core';
+import { Component, OnInit, ViewChild }      from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location }               from '@angular/common';
+import { NgForm } from '@angular/forms';
 
 import { DataService } from '../data.service'
 
@@ -68,6 +69,7 @@ export class StudentClassFormComponent implements OnInit {
     }
 
     this.student_class = {};
+    this.studentClassForm.reset();
     
   }
 
@@ -82,6 +84,53 @@ export class StudentClassFormComponent implements OnInit {
       return item1.student_id === item2.student_id;
     }
   }
+
+  studentClassForm: NgForm;
+  @ViewChild('studentClassForm')
+  currentForm: NgForm;
+
+  ngAfterViewChecked() {
+    this.formChanged();
+  }
+
+  formChanged() {
+    this.studentClassForm = this.currentForm;
+    this.studentClassForm.valueChanges
+      .subscribe(
+        data => this.onValueChanged(data)
+      );
+  }
+
+  onValueChanged(data?: any) {
+    let form = this.studentClassForm.form;
+
+    for (let field in this.formErrors) {
+      // clear previous error message (if any)
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  formErrors = {
+    'student_id': '',
+    'class_id': ''
+  };
+
+  validationMessages = {
+    'student_id': {
+      'required': 'A student is required.',
+    },
+    'class_id': {
+      'required': 'A class is required.'
+    }
+  };
 
 }
 
