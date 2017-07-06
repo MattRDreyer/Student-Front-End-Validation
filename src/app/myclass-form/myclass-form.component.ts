@@ -1,7 +1,8 @@
 import 'rxjs/add/operator/switchMap';
-import { Component, OnInit }      from '@angular/core';
+import { Component, OnInit, ViewChild }      from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location }               from '@angular/common';
+import { NgForm } from '@angular/forms';
 
 import { DataService } from '../data.service'
 
@@ -12,11 +13,21 @@ import { DataService } from '../data.service'
 })
 export class MyclassFormComponent implements OnInit {
 
+  myclassForm: NgForm;
+  @ViewChild('myclassForm')
+  currentForm: NgForm;
+
   successMessage: string;
   errorMessage: string;
 
   myclass: object = {};
   instructors: any[];
+
+   constructor(
+    private dataService: DataService,
+    private route: ActivatedRoute,
+    private location: Location
+  ) {}
 
   getRecordForEdit(){
     this.route.params
@@ -30,12 +41,6 @@ export class MyclassFormComponent implements OnInit {
         instructors => this.instructors = instructors,
         error =>  this.errorMessage = <any>error);
   }
-
-  constructor(
-    private dataService: DataService,
-    private route: ActivatedRoute,
-    private location: Location
-  ) {}
 
   ngOnInit() {
     this.getInstructors();
@@ -58,8 +63,8 @@ export class MyclassFormComponent implements OnInit {
             myclass => this.successMessage = "Record added succesfully",
             error =>  this.errorMessage = <any>error);
     }
-
     this.myclass = {};
+    this.myclassForm.reset();
     
   }
 
@@ -68,6 +73,56 @@ export class MyclassFormComponent implements OnInit {
       return item1.instructor_id === item2.instructor_id;
     }
   }
+
+  ngAfterViewChecked() {
+    this.formChanged();
+  }
+
+  formChanged() {
+    this.myclassForm = this.currentForm;
+    this.myclassForm.valueChanges
+      .subscribe(
+        data => this.onValueChanged(data)
+      );
+  }
+
+  onValueChanged(data?: any) {
+    let form = this.myclassForm.form;
+
+    for (let field in this.formErrors) {
+      // clear previous error message (if any)
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  formErrors = {
+    'instructor': '',
+    'subject': '',
+    'course': '',
+  };
+
+  validationMessages = {
+    'instructor': {
+      'required': 'instructor is required.',
+    },
+    'subject': {
+      'required': 'subject is required.',
+      'minlength': 'subject must be at least 3 characters long.',
+      'maxlength': 'subject cannot be more than 30 characters long.'
+    },
+     'course': {
+      'type': 'input should be numbers only'
+    }
+    
+  };
 
 }
 
