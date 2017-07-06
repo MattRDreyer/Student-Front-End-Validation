@@ -5,11 +5,16 @@ import { Location }               from '@angular/common';
 import { NgForm } from '@angular/forms';
 
 import { DataService } from '../data.service'
+import { slideInOutAnimation } from '../animations/slide-in.animation';
 
 @Component({
   selector: 'app-major-form',
   templateUrl: './major-form.component.html',
-  styleUrls: ['./major-form.component.css']
+  styleUrls: ['./major-form.component.css'],
+  animations: [slideInOutAnimation],
+ 
+    // attach the slide in/out animation to the host (root) element of this component
+    host: { '[@slideInOutAnimation]': '' }
 })
 export class MajorFormComponent implements OnInit {
 
