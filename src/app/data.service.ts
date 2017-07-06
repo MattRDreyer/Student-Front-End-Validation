@@ -37,6 +37,7 @@ export class DataService {
     editRecord(endpoint: string, record:object, id:number): Observable<object> {
         let apiUrl = `${this.baseUrl}${endpoint}/${id}`;
         console.log(record)
+        record = this.clean_request_body(record);
         console.log(apiUrl)
         return this.http.put(apiUrl, record)
             .map(this.extractData)
@@ -51,6 +52,9 @@ export class DataService {
             .catch(this.handleError);
     }
 
+    clean_request_body(request_body) {
+        return JSON.parse(JSON.stringify(request_body).replace(/\"\"/g, null))
+    }
 
     private extractData(res: Response) {
         let results = res.json();
