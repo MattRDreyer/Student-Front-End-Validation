@@ -107,13 +107,13 @@ export class MyclassFormComponent implements OnInit {
   }
 
   formErrors = {
-    'instructor': '',
+    'instructor_id': '',
     'subject': '',
     'course': ''
   };
 
   validationMessages = {
-    'instructor': {
+    'instructor_id': {
       'required': 'instructor is required.',
     },
     'subject': {
@@ -122,7 +122,8 @@ export class MyclassFormComponent implements OnInit {
       'maxlength': 'subject cannot be more than 30 characters long.'
     },
      'course': {
-      'type': 'input should be numbers only'
+      'minlength': 'course must be at least 3 number long.',
+      'maxlength': 'course must be 3 number long only.',
     }
     
   };
