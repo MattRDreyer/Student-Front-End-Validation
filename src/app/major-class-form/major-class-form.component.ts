@@ -1,8 +1,8 @@
 import 'rxjs/add/operator/switchMap';
-import { Component, OnInit }      from '@angular/core';
+import { Component, OnInit, ViewChild }      from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location }               from '@angular/common';
-
+import { NgForm } from '@angular/forms';
 import { DataService } from '../data.service'
 
 @Component({
@@ -66,6 +66,7 @@ export class MajorClassFormComponent implements OnInit {
     }
 
     this.major_class = {};
+    this.majorClassForm.reset();
     
   }
 
@@ -80,7 +81,52 @@ export class MajorClassFormComponent implements OnInit {
       return item1.class_id === item2.class_id;
     }
   }
+majorClassForm: NgForm;
+  @ViewChild('majorClassForm')
+  currentForm: NgForm;
 
+  ngAfterViewChecked() {
+    this.formChanged();
+  }
+
+  formChanged() {
+    this.majorClassForm = this.currentForm;
+    this.majorClassForm.valueChanges
+      .subscribe(
+        data => this.onValueChanged(data)
+      );
+  }
+
+  onValueChanged(data?: any) {
+    let form = this.majorClassForm.form;
+
+    for (let field in this.formErrors) {
+      // clear previous error message (if any)
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  formErrors = {
+    'major_id': '',
+    'class_id': ''
+  };
+
+  validationMessages = {
+    'major_id': {
+      'required': 'Major is required.',
+    },
+    'class_id': {
+      'required': 'Class is required.'
+    }
+  };
 }
 
 
